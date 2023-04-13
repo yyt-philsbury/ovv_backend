@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from 'src/core/core.module';
 import { ExampleModule } from 'src/example/example.module';
 import { LoggerModule } from 'src/logger/logger.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 import { YoutubeModule } from 'src/youtube/youtube.module';
 
 @Global()
@@ -13,6 +14,7 @@ import { YoutubeModule } from 'src/youtube/youtube.module';
     LoggerModule,
     YoutubeModule,
     CoreModule,
+    PrismaModule,
   ],
 })
 export class AppModule {}

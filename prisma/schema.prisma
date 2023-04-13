@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:./db/database.db"
+}
+
+model videos {
+    // http://www.youtube.com/watch?v=ZedLgAF9aEg
+    // link_id = ZedLgAF9aEg
+    id                   String @id
+    views                BigInt
+    // YYYY-MM-DD
+    original_upload_date String
+    title                String
+    author               String
+    // YYYY-MM-DD
+    added_on             String
+}

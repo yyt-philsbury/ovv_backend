@@ -1,0 +1,8 @@
+/dist
+/node_modules
+/prisma
+/src/generated/typescript-axios
+/seed
+/logs
+.env.development
+.env.production

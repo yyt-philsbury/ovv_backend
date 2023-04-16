@@ -14,7 +14,8 @@ model videos {
     // http://www.youtube.com/watch?v=ZedLgAF9aEg
     // link_id = ZedLgAF9aEg
     id                   String @id
-    views                BigInt
+    // sqlite Ints can ben 8 bytes long
+    views                Int
     // YYYY-MM-DD
     original_upload_date String
     title                String

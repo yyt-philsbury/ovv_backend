@@ -1,5 +1,12 @@
-import { Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
-import moment from 'moment';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import * as moment from 'moment';
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
 import { YoutubeService } from 'src/youtube/youtube.service';
@@ -55,6 +62,17 @@ export class CoreController {
       skip,
       take,
     });
+  }
+
+  @Get('video')
+  async getVideo(@Query('id') id: string) {
+    const video = this.prisma.videos.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!video) throw new NotFoundException('Video not found');
+    return video;
   }
 }
 

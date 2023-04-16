@@ -4,7 +4,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import axios, { AxiosError } from 'axios';
-import moment from 'moment';
+import * as moment from 'moment';
 import timeoutSignalController from 'src/common/utils/abort_timeout';
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 

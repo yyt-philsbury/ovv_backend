@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
@@ -10,6 +11,9 @@ import * as moment from 'moment';
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
 import { YoutubeService } from 'src/youtube/youtube.service';
+
+const MINIMUM_VIEW_COUNT = 1000000;
+const MAXIMUM_UPLOAD_DATE = '2011-01-01';
 
 @Controller('v1/core')
 export class CoreController {
@@ -35,6 +39,19 @@ export class CoreController {
       };
     } else {
       const videoInfo = await this.ytService.getVideoInfo(id);
+
+      if (videoInfo.viewCount < MINIMUM_VIEW_COUNT) {
+        throw new BadRequestException('Video has less than 1 million views');
+      }
+      if (
+        moment(videoInfo.publishDate, 'YYYY-MM-DD') >
+        moment(MAXIMUM_UPLOAD_DATE, 'YYYY-MM-DD')
+      ) {
+        throw new BadRequestException(
+          `Video must be uploaded before ${MAXIMUM_UPLOAD_DATE}`,
+        );
+      }
+
       const video = await this.prisma.videos.create({
         data: {
           added_on: moment(new Date()).format('YYYY-MM-DD'),

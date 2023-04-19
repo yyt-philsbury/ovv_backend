@@ -63,7 +63,7 @@ async function main() {
     },
   ];
 
-  const query = `
+  const insertQuery = `
   INSERT INTO videos (added_on, author, id, original_upload_date, title, views)
      VALUES
      ${data
@@ -78,10 +78,27 @@ async function main() {
        })
        .join(',\n')}
  `;
+  console.log(insertQuery);
 
-  console.log(query);
+  const insertIntoSearchQuery = `
+  INSERT INTO video_search ( author, id, title, original_upload_date)
+    VALUES
+    ${data
+      .map(e => {
+        return `('${e.author.replaceAll("'", "''").replaceAll('"', '""')}', '${
+          e.id
+        }', '${e.title.replaceAll("'", "''").replaceAll('"', '""')}', '${
+          e.original_upload_date
+        }')`;
+      })
+      .join(',\n')}
+  `;
+  console.log(insertIntoSearchQuery);
 
-  await prisma.$executeRawUnsafe(query);
+  await prisma.$transaction([
+    prisma.$executeRawUnsafe(insertQuery),
+    prisma.$executeRawUnsafe(insertIntoSearchQuery),
+  ]);
 }
 main()
   .then(async () => {

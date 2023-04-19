@@ -68,7 +68,13 @@ async function main() {
      VALUES
      ${data
        .map(e => {
-         return `('${e.added_on}', '${e.author}', '${e.id}', '${e.original_upload_date}', "${e.title}", ${e.views})`;
+         return `('${e.added_on}', '${e.author
+           .replaceAll("'", "''")
+           .replaceAll('"', '""')}', '${e.id}', '${
+           e.original_upload_date
+         }', '${e.title.replaceAll("'", "''").replaceAll('"', '""')}', ${
+           e.views
+         })`;
        })
        .join(',\n')}
  `;

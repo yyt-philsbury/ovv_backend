@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  NotFoundException,
-  ParseIntPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { BadRequestException, Controller, Post, Query } from '@nestjs/common';
 import * as moment from 'moment';
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
@@ -52,16 +44,21 @@ export class CoreController {
         );
       }
 
-      const video = await this.prisma.videos.create({
-        data: {
-          added_on: moment(new Date()).format('YYYY-MM-DD'),
-          author: videoInfo.author,
-          id,
-          original_upload_date: videoInfo.publishDate,
-          title: videoInfo.title,
-          views: videoInfo.viewCount,
-        },
-      });
+      const [video] = await this.prisma.$transaction([
+        this.prisma.videos.create({
+          data: {
+            added_on: moment(new Date()).format('YYYY-MM-DD'),
+            author: videoInfo.author,
+            id,
+            original_upload_date: videoInfo.publishDate,
+            title: videoInfo.title,
+            views: videoInfo.viewCount,
+          },
+        }),
+        this.prisma.$executeRawUnsafe(
+          `INSERT videos_search(id, title, author, original_upload_date) VALUES ('${id}','${videoInfo.title}', '${videoInfo.author}', '${videoInfo.publishDate}')`,
+        ),
+      ]);
 
       return {
         video,
@@ -70,26 +67,13 @@ export class CoreController {
     }
   }
 
-  @Get('get_recent_videos')
-  async getRecentVideos(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
-  ) {
-    return this.prisma.videos.findMany({
-      skip,
-      take,
-    });
-  }
-
-  @Get('video')
-  async getVideo(@Query('id') id: string) {
-    const video = this.prisma.videos.findFirst({
-      where: {
-        id,
-      },
-    });
-    if (!video) throw new NotFoundException('Video not found');
-    return video;
-  }
+  // @Get('videos')
+  // async getVideos(
+  //   @Query('skip', ParseIntPipe) skip: number,
+  //   @Query('take', ParseIntPipe) take: number,
+  //   @Query('search') search: string,
+  // ) {
+  //   return videos;
+  // }
 }
 

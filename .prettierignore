@@ -1,4 +1,6 @@
-/prisma
+/prisma/schema.prisma
+/prisma/db
+/prisma/migrations
 
 .env.development
 .env.production

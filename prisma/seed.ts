@@ -81,15 +81,15 @@ async function main() {
   console.log(insertQuery);
 
   const insertIntoSearchQuery = `
-  INSERT INTO video_search ( author, id, title, original_upload_date)
+  INSERT INTO video_search ( author, id, title, original_upload_year)
     VALUES
     ${data
       .map(e => {
         return `('${e.author.replaceAll("'", "''").replaceAll('"', '""')}', '${
           e.id
-        }', '${e.title.replaceAll("'", "''").replaceAll('"', '""')}', '${
-          e.original_upload_date
-        }')`;
+        }', '${e.title
+          .replaceAll("'", "''")
+          .replaceAll('"', '""')}', '${e.original_upload_date.slice(0, 4)}')`;
       })
       .join(',\n')}
   `;

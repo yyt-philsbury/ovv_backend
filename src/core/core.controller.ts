@@ -1,4 +1,13 @@
-import { BadRequestException, Controller, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import * as moment from 'moment';
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
@@ -71,13 +80,65 @@ export class CoreController {
     }
   }
 
-  // @Get('videos')
-  // async getVideos(
-  //   @Query('skip', ParseIntPipe) skip: number,
-  //   @Query('take', ParseIntPipe) take: number,
-  //   @Query('search') search: string,
-  // ) {
-  //   return videos;
-  // }
+  @Get('videos')
+  async getVideos(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('take', new DefaultValuePipe(100), ParseIntPipe) take: number,
+    @Query('search', new DefaultValuePipe('')) search: string,
+    @Query(
+      'years',
+      new DefaultValuePipe([]),
+      new ParseArrayPipe({ items: Number, separator: ',' }),
+    )
+    years: number[],
+  ) {
+    // return latest videos
+    if (search === '') {
+      return this.prisma.videos.findMany({
+        where: {
+          OR:
+            years.length > 0
+              ? years.map(e => ({
+                  original_upload_date: {
+                    startsWith: e.toString(),
+                  },
+                }))
+              : undefined,
+        },
+        skip,
+        take,
+      });
+    } else {
+      const ids = (await this.prisma.$queryRawUnsafe(
+        `SELECT id from video_search WHERE video_search = \'${search
+          .replaceAll("'", "''")
+          .replaceAll('"', '""')}\' ORDER BY RANK`,
+      )) as { id: string }[];
+
+      return this.prisma.videos.findMany({
+        where: {
+          AND: [
+            {
+              id: {
+                in: ids.map(e => e.id),
+              },
+            },
+            {
+              OR:
+                years.length > 0
+                  ? years.map(e => ({
+                      original_upload_date: {
+                        startsWith: e.toString(),
+                      },
+                    }))
+                  : undefined,
+            },
+          ],
+        },
+        skip,
+        take,
+      });
+    }
+  }
 }
 

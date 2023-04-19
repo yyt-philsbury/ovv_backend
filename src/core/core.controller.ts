@@ -56,7 +56,11 @@ export class CoreController {
           },
         }),
         this.prisma.$executeRawUnsafe(
-          `INSERT videos_search(id, title, author, original_upload_date) VALUES ('${id}','${videoInfo.title}', '${videoInfo.author}', '${videoInfo.publishDate}')`,
+          `INSERT videos_search(id, title, author, original_upload_date) VALUES ('${id}','${videoInfo.title
+            .replaceAll("'", "''")
+            .replaceAll('"', '""')}', '${videoInfo.author
+            .replaceAll("'", "''")
+            .replaceAll('"', '""')}', '${videoInfo.publishDate}')`,
         ),
       ]);
 

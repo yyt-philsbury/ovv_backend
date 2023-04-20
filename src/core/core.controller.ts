@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import * as moment from 'moment';
+import moment = require('moment');
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
 import { YoutubeService } from 'src/youtube/youtube.service';
@@ -56,7 +56,7 @@ export class CoreController {
       const [video] = await this.prisma.$transaction([
         this.prisma.videos.create({
           data: {
-            added_on: moment(new Date()).format('YYYY-MM-DD'),
+            added_on: new Date(),
             author: videoInfo.author,
             id,
             original_upload_date: videoInfo.publishDate,
@@ -65,11 +65,11 @@ export class CoreController {
           },
         }),
         this.prisma.$executeRawUnsafe(
-          `INSERT videos_search(id, title, author, original_upload_date) VALUES ('${id}','${videoInfo.title
+          `INSERT INTO video_search(id, title, author, original_upload_year) VALUES ('${id}','${videoInfo.title
             .replaceAll("'", "''")
             .replaceAll('"', '""')}', '${videoInfo.author
             .replaceAll("'", "''")
-            .replaceAll('"', '""')}', '${videoInfo.publishDate}')`,
+            .replaceAll('"', '""')}', '${videoInfo.publishDate.slice(0, 4)}')`,
         ),
       ]);
 
@@ -107,6 +107,9 @@ export class CoreController {
         },
         skip,
         take,
+        orderBy: {
+          added_on: 'desc',
+        },
       });
     } else {
       const ids = (await this.prisma.$queryRawUnsafe(

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -10,16 +7,19 @@ datasource db {
     url      = "file:./db/database.db"
 }
 
+// https://github.com/prisma/prisma/issues/9414
+// update the prisma schema code with the changes I want
+// in my dev environment I run prisma migrate reset, to reset the database to not use my custom full text index.
+// then run prisma migrate dev to generate the new migration
+// run again my custom SQL to generate the full text index
+// if all test go well, deploy code to prod, but on prod I only run prisma migrate deploy
+
 model videos {
-    // http://www.youtube.com/watch?v=ZedLgAF9aEg
-    // link_id = ZedLgAF9aEg
-    id                   String @id
-    // sqlite Ints can ben 8 bytes long
+    id                   String   @id
     views                Int
-    // YYYY-MM-DD
     original_upload_date String
     title                String
     author               String
-    // YYYY-MM-DD
-    added_on             String
+    // Integer
+    added_on             DateTime
 }

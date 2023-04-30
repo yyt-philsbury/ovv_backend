@@ -3,7 +3,7 @@ module.exports = {
     {
       // Primary is what will run CRON jobs
       // can use process.env.name to access this
-      name: 'NestJS Backend Template (Primary)',
+      name: 'ovv_primary',
       // We run the transpiled version to avoid transpiling
       // all instances to javascript on dev mode
       // So basically because the code is in TS, we can't
@@ -19,20 +19,20 @@ module.exports = {
         NODE_ENV: 'production',
       },
     },
-    {
-      name: 'NestJS Backend Template (Replica)',
-      script: './dist/src/main.js',
-      // max cpus - 1
-      // can change to hard coded number
-      instances: '-1',
-      exec_mode: 'cluster',
-      env_development: {
-        NODE_ENV: 'development',
-      },
-      env_production: {
-        NODE_ENV: 'production',
-      },
-    },
+    // {
+    //   name: 'ovv_replica',
+    //   script: './dist/src/main.js',
+    //   // max cpus - 1
+    //   // can change to hard coded number
+    //   // 0 is max instance
+    //   instances: '-1',
+    //   exec_mode: 'cluster',
+    //   env_development: {
+    //     NODE_ENV: 'development',
+    //   },
+    //   env_production: {
+    //     NODE_ENV: 'production',
+    //   },
+    // },
   ],
 };
-

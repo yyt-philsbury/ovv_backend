@@ -3,7 +3,7 @@ module.exports = {
     {
       // Primary is what will run CRON jobs
       // can use process.env.name to access this
-      name: 'ovv_primary',
+      name: 'ovv_be_1',
       // We run the transpiled version to avoid transpiling
       // all instances to javascript on dev mode
       // So basically because the code is in TS, we can't
@@ -20,7 +20,7 @@ module.exports = {
       },
     },
     // {
-    //   name: 'ovv_replica',
+    //   name: 'ovv_be_rep',
     //   script: './dist/src/main.js',
     //   // max cpus - 1
     //   // can change to hard coded number

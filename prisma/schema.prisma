@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    url      = "file:./db/database.db"
+    url      = "file:/dbs/oldviralvideos/database.db"
 }
 
 // https://github.com/prisma/prisma/issues/9414

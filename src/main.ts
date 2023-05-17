@@ -26,6 +26,7 @@ async function bootstrap() {
     new HttpExceptionFilter(),
   );
 
-  await app.listen(process.env.PORT || '');
+  logger.log(`running on port ${process.env.PORT}`);
+  await app.listen(process.env.PORT || -1);
 }
 bootstrap();

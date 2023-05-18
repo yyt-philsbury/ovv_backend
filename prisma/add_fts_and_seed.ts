@@ -23,7 +23,7 @@ async function main() {
     },
     {
       title: 'How to be Gangster',
-      author: 'LE SSERAFIM',
+      author: 'nigahiga',
       id: 'khFhF64P3VQ',
       original_upload_date: '2007-11-04',
       views: 47628100,

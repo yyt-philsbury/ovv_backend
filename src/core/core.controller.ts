@@ -83,7 +83,7 @@ export class CoreController {
   @Get('videos')
   async getVideos(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
-    @Query('take', new DefaultValuePipe(100), ParseIntPipe) take: number,
+    @Query('take', new DefaultValuePipe(500), ParseIntPipe) take: number,
     @Query('search', new DefaultValuePipe('')) search: string,
     @Query(
       'years',

@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import moment = require('moment');
+import he = require('he');
 import { CustomWinstonLogger } from 'src/logger/custom_winston_logger.service';
 import { PrismaClientService } from 'src/prisma/prisma.service';
 import { YoutubeService } from 'src/youtube/youtube.service';
@@ -25,6 +26,25 @@ export class CoreController {
   ) {
     logger.setContext(CoreController.name);
   }
+
+  // @Get('fix')
+  // async fixVideos() {
+  //   const videos = await this.prisma.videos.findMany();
+
+  //   for (let i = 0; i < videos.length; i += 1) {
+  //     const { author, title } = videos[i];
+
+  //     await this.prisma.videos.update({
+  //       data: {
+  //         author: he.decode(author),
+  //         title: he.decode(title),
+  //       },
+  //       where: {
+  //         id: videos[i].id,
+  //       },
+  //     });
+  //   }
+  // }
 
   @Post('addvideo')
   async addVideo(@Query('id') id: string) {
@@ -53,21 +73,26 @@ export class CoreController {
         );
       }
 
+      const { author, title } = videoInfo;
+
+      const decodedAuthor = he.decode(author);
+      const decodedTitle = he.decode(title);
+
       const [video] = await this.prisma.$transaction([
         this.prisma.videos.create({
           data: {
             added_on: new Date(),
-            author: videoInfo.author,
+            author: decodedTitle,
             id,
             original_upload_date: videoInfo.publishDate,
-            title: videoInfo.title,
+            title: decodedAuthor,
             views: videoInfo.viewCount,
           },
         }),
         this.prisma.$executeRawUnsafe(
-          `INSERT INTO video_search(id, title, author, original_upload_year) VALUES ('${id}','${videoInfo.title
+          `INSERT INTO video_search(id, title, author, original_upload_year) VALUES ('${id}','${decodedTitle
             .replaceAll("'", "''")
-            .replaceAll('"', '""')}', '${videoInfo.author
+            .replaceAll('"', '""')}', '${decodedAuthor
             .replaceAll("'", "''")
             .replaceAll('"', '""')}', '${videoInfo.publishDate.slice(0, 4)}')`,
         ),

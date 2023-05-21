@@ -82,10 +82,10 @@ export class CoreController {
         this.prisma.videos.create({
           data: {
             added_on: new Date(),
-            author: decodedTitle,
+            author: decodedAuthor,
             id,
             original_upload_date: videoInfo.publishDate,
-            title: decodedAuthor,
+            title: decodedTitle,
             views: videoInfo.viewCount,
           },
         }),

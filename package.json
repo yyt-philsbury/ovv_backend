@@ -14,6 +14,7 @@
     "generate": "prisma generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "pmco": "prisma migrate dev --create-only",
+    "postinstall": "yarn generate",
     "seed": "ts-node prisma/add_fts_and_seed.ts",
     "sort": "sort-package-json",
     "start": "cross-env NODE_ENV=development nest start",
